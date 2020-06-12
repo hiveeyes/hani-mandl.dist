@@ -675,8 +675,19 @@ void setup()
   }
   
   scale.begin(hx711_dt_pin, hx711_sck_pin);
-  scale.power_up();
-
+  if (scale.wait_ready_timeout(1000)) {
+    scale.power_up();
+  } else {
+    u8g2.clearBuffer();
+    u8g2.setCursor( 14, 24); u8g2.print("Keine");
+    u8g2.setCursor( 6, 56);  u8g2.print("Waage!");
+    u8g2.sendBuffer();
+#ifdef isDebug
+    Serial.println("Keine Waage!");
+#endif
+    delay(1000);
+  }
+  
 //  servo.attach(servo_pin, 750, 2500);
   servo.attach(servo_pin);
   servo.write(winkel_min);
